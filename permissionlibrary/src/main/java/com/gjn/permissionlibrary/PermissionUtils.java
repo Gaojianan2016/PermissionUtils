@@ -35,6 +35,8 @@ public class PermissionUtils {
     public static final int CODE_STORAGE = 8;       //SD卡权限
     public static final int CODE_MULTI = 111;       //多个权限
 
+    public static boolean isDebug = false;
+
     //日历权限 0
     public static final String PERMISSION_READ_CALENDAR = Manifest.permission.READ_CALENDAR;
     //相机权限 1
@@ -76,6 +78,12 @@ public class PermissionUtils {
         }
         if (notGranted.size() > 0) {
             //向系统请求权限
+            if (isDebug) {
+                Log.d(TAG, "请求权限: code = " + code);
+                for (String str : notGranted) {
+                    Log.d(TAG, str);
+                }
+            }
             ActivityCompat.requestPermissions(activity, notGranted.toArray(new String[notGranted.size()]), code);
             return false;
         }
@@ -165,9 +173,15 @@ public class PermissionUtils {
             Log.i(TAG, "api < 23!");
             return;
         }
+        if (isDebug) {
+            Log.d(TAG, "requestCode = " + requestCode);
+        }
         //未允许权限集合
         List<String> notGranted = new ArrayList<>();
         for (int i = 0; i < grantResults.length; i++) {
+            if (isDebug) {
+                Log.d(TAG, "权限 = " + permissions[i] + ", 当前结果 = " + grantResults[i]);
+            }
             //添加未允许的权限
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
                 notGranted.add(permissions[i]);
