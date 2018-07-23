@@ -37,22 +37,38 @@ public class PermissionUtils {
 
     //日历权限 0
     public static final String PERMISSION_READ_CALENDAR = Manifest.permission.READ_CALENDAR;
+    public static final String PERMISSION_WRITE_CALENDAR = Manifest.permission.WRITE_CALENDAR;
     //相机权限 1
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     //联系人权限 2
     public static final String PERMISSION_WRITE_CONTACTS = Manifest.permission.WRITE_CONTACTS;
+    public static final String PERMISSION_GET_ACCOUNTS = Manifest.permission.GET_ACCOUNTS;
+    public static final String PERMISSION_READ_CONTACTS = Manifest.permission.READ_CONTACTS;
     //定位权限 3
     public static final String PERMISSION_ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    public static final String PERMISSION_ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     //麦克相关权限 4
     public static final String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     //手机状态权限 5
     public static final String PERMISSION_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
+    public static final String PERMISSION_CALL_PHONE = Manifest.permission.CALL_PHONE;
+    public static final String PERMISSION_USE_SIP = Manifest.permission.USE_SIP;
+    public static final String PERMISSION_PROCESS_OUTGOING_CALLS = Manifest.permission.PROCESS_OUTGOING_CALLS;
+    public static final String PERMISSION_ADD_VOICEMAIL = Manifest.permission.ADD_VOICEMAIL;
+    public static final String PERMISSION_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
+    public static final String PERMISSION_WRITE_CALL_LOG = Manifest.permission.WRITE_CALL_LOG;
     //传感器权限 6
     public static final String PERMISSION_BODY_SENSORS = Manifest.permission.BODY_SENSORS;
     //短信权限 7
     public static final String PERMISSION_READ_SMS = Manifest.permission.READ_SMS;
+    public static final String PERMISSION_RECEIVE_WAP_PUSH = Manifest.permission.RECEIVE_WAP_PUSH;
+    public static final String PERMISSION_RECEIVE_MMS = Manifest.permission.RECEIVE_MMS;
+    public static final String PERMISSION_RECEIVE_SMS = Manifest.permission.RECEIVE_SMS;
+    public static final String PERMISSION_SEND_SMS = Manifest.permission.SEND_SMS;
+    public static final String PERMISSION_READ_CELL_BROADCASTS = "android.permission.READ_CELL_BROADCASTS";
     //SD卡权限 8
     public static final String PERMISSION_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
+    public static final String PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     /**
      * 判断是否请求权限
@@ -100,6 +116,9 @@ public class PermissionUtils {
         //日历权限
         if (codes.contains(CODE_CALENDAR)) {
             permissions.add(PERMISSION_READ_CALENDAR);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_WRITE_CALENDAR);
+            }
         }
         //相机权限
         if (codes.contains(CODE_CAMERA)) {
@@ -108,10 +127,17 @@ public class PermissionUtils {
         //联系人权限
         if (codes.contains(CODE_CONTACTS)) {
             permissions.add(PERMISSION_WRITE_CONTACTS);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_GET_ACCOUNTS);
+                permissions.add(PERMISSION_READ_CONTACTS);
+            }
         }
         //定位权限
         if (codes.contains(CODE_LOCATION)) {
             permissions.add(PERMISSION_ACCESS_FINE_LOCATION);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_ACCESS_COARSE_LOCATION);
+            }
         }
         //麦克相关权限
         if (codes.contains(CODE_MICROPHONE)) {
@@ -120,6 +146,14 @@ public class PermissionUtils {
         //手机状态权限
         if (codes.contains(CODE_PHONE)) {
             permissions.add(PERMISSION_READ_PHONE_STATE);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_CALL_PHONE);
+                permissions.add(PERMISSION_USE_SIP);
+                permissions.add(PERMISSION_PROCESS_OUTGOING_CALLS);
+                permissions.add(PERMISSION_ADD_VOICEMAIL);
+                permissions.add(PERMISSION_READ_CALL_LOG);
+                permissions.add(PERMISSION_WRITE_CALL_LOG);
+            }
         }
         //传感器权限
         if (codes.contains(CODE_SENSORS)) {
@@ -128,10 +162,20 @@ public class PermissionUtils {
         //短信权限
         if (codes.contains(CODE_SMS)) {
             permissions.add(PERMISSION_READ_SMS);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_RECEIVE_WAP_PUSH);
+                permissions.add(PERMISSION_RECEIVE_MMS);
+                permissions.add(PERMISSION_RECEIVE_SMS);
+                permissions.add(PERMISSION_SEND_SMS);
+                permissions.add(PERMISSION_READ_CELL_BROADCASTS);
+            }
         }
         //SD卡权限
         if (codes.contains(CODE_STORAGE)) {
             permissions.add(PERMISSION_READ_EXTERNAL_STORAGE);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+                permissions.add(PERMISSION_WRITE_EXTERNAL_STORAGE);
+            }
         }
 
         if (permissions.size() == 0){
