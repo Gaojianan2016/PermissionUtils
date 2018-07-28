@@ -1,5 +1,6 @@
 # PermissionUtils
 权限管理工具
+[![](https://jitpack.io/v/Gaojianan2016/PermissionUtils.svg)](https://jitpack.io/#Gaojianan2016/PermissionUtils)
 
 ```
 allprojects {
