@@ -33,6 +33,8 @@ public class PermissionUtils {
     public static final int CODE_STORAGE = 8;       //SD卡权限
     public static final int CODE_MULTI = 111;       //多个权限
 
+    public static boolean isAll;
+
     public static boolean isDebug = false;
 
     //日历权限 0
@@ -116,7 +118,7 @@ public class PermissionUtils {
         //日历权限
         if (codes.contains(CODE_CALENDAR)) {
             permissions.add(PERMISSION_READ_CALENDAR);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_WRITE_CALENDAR);
             }
         }
@@ -127,7 +129,7 @@ public class PermissionUtils {
         //联系人权限
         if (codes.contains(CODE_CONTACTS)) {
             permissions.add(PERMISSION_WRITE_CONTACTS);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_GET_ACCOUNTS);
                 permissions.add(PERMISSION_READ_CONTACTS);
             }
@@ -135,7 +137,7 @@ public class PermissionUtils {
         //定位权限
         if (codes.contains(CODE_LOCATION)) {
             permissions.add(PERMISSION_ACCESS_FINE_LOCATION);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_ACCESS_COARSE_LOCATION);
             }
         }
@@ -146,7 +148,7 @@ public class PermissionUtils {
         //手机状态权限
         if (codes.contains(CODE_PHONE)) {
             permissions.add(PERMISSION_READ_PHONE_STATE);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_CALL_PHONE);
                 permissions.add(PERMISSION_USE_SIP);
                 permissions.add(PERMISSION_PROCESS_OUTGOING_CALLS);
@@ -162,7 +164,7 @@ public class PermissionUtils {
         //短信权限
         if (codes.contains(CODE_SMS)) {
             permissions.add(PERMISSION_READ_SMS);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_RECEIVE_WAP_PUSH);
                 permissions.add(PERMISSION_RECEIVE_MMS);
                 permissions.add(PERMISSION_RECEIVE_SMS);
@@ -173,7 +175,7 @@ public class PermissionUtils {
         //SD卡权限
         if (codes.contains(CODE_STORAGE)) {
             permissions.add(PERMISSION_READ_EXTERNAL_STORAGE);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
                 permissions.add(PERMISSION_WRITE_EXTERNAL_STORAGE);
             }
         }
