@@ -1,8 +1,8 @@
 package com.gjn.permissionutils;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.gjn.permissionlibrary.PermissionCallBack;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             if (PermissionUtils.requestPermissions(this, PermissionUtils.CODE_CAMERA,
                     PermissionUtils.CODE_PHONE, PermissionUtils.CODE_STORAGE)) {
                 Log.e("-s-", "权限全通过");
-            }else {
+            } else {
                 Log.e("-s-", "权限部分未通过");
             }
         }

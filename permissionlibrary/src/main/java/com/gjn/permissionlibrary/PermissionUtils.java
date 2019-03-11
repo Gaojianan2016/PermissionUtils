@@ -22,36 +22,40 @@ import java.util.List;
 public class PermissionUtils {
     private static final String TAG = "PermissionUtils";
 
-    public static final int CODE_CALENDAR = 0;      //日历权限
-    public static final int CODE_CAMERA = 1;        //相机权限
-    public static final int CODE_CONTACTS = 2;      //联系人权限
-    public static final int CODE_LOCATION = 3;      //定位权限
-    public static final int CODE_MICROPHONE = 4;    //麦克相关权限
-    public static final int CODE_PHONE = 5;         //手机状态权限
-    public static final int CODE_SENSORS = 6;       //传感器权限
-    public static final int CODE_SMS = 7;           //短信权限
-    public static final int CODE_STORAGE = 8;       //SD卡权限
-    public static final int CODE_MULTI = 111;       //多个权限
-
-    public static boolean isAll;
-
     public static boolean isDebug = false;
 
+    public static final int CODE_CALENDAR =     0x780;      //日历权限
+    public static final int CODE_CAMERA =       0x781;      //相机权限
+    public static final int CODE_CONTACTS =     0x782;      //联系人权限
+    public static final int CODE_LOCATION =     0x783;      //定位权限
+    public static final int CODE_MICROPHONE =   0x784;      //麦克相关权限
+    public static final int CODE_PHONE =        0x785;      //手机状态权限
+    public static final int CODE_SENSORS =      0x786;      //传感器权限
+    public static final int CODE_SMS =          0x787;      //短信权限
+    public static final int CODE_STORAGE =      0x788;      //SD卡权限
+    public static final int CODE_MULTI =        0x7834;     //多个权限
+
     //日历权限 0
+    public static final String PERMISSION_GROUP_CALENDAR = Manifest.permission_group.CALENDAR;
     public static final String PERMISSION_READ_CALENDAR = Manifest.permission.READ_CALENDAR;
     public static final String PERMISSION_WRITE_CALENDAR = Manifest.permission.WRITE_CALENDAR;
     //相机权限 1
+    public static final String PERMISSION_GROUP_CAMERA = Manifest.permission_group.CAMERA;
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     //联系人权限 2
+    public static final String PERMISSION_GROUP_CONTACTS = Manifest.permission_group.CONTACTS;
     public static final String PERMISSION_WRITE_CONTACTS = Manifest.permission.WRITE_CONTACTS;
     public static final String PERMISSION_GET_ACCOUNTS = Manifest.permission.GET_ACCOUNTS;
     public static final String PERMISSION_READ_CONTACTS = Manifest.permission.READ_CONTACTS;
     //定位权限 3
+    public static final String PERMISSION_GROUP_LOCATION = Manifest.permission_group.LOCATION;
     public static final String PERMISSION_ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String PERMISSION_ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     //麦克相关权限 4
+    public static final String PERMISSION_GROUP_MICROPHONE = Manifest.permission_group.MICROPHONE;
     public static final String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     //手机状态权限 5
+    public static final String PERMISSION_GROUP_PHONE = Manifest.permission_group.PHONE;
     public static final String PERMISSION_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
     public static final String PERMISSION_CALL_PHONE = Manifest.permission.CALL_PHONE;
     public static final String PERMISSION_USE_SIP = Manifest.permission.USE_SIP;
@@ -60,8 +64,10 @@ public class PermissionUtils {
     public static final String PERMISSION_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
     public static final String PERMISSION_WRITE_CALL_LOG = Manifest.permission.WRITE_CALL_LOG;
     //传感器权限 6
+    public static final String PERMISSION_GROUP_SENSORS = Manifest.permission_group.SENSORS;
     public static final String PERMISSION_BODY_SENSORS = Manifest.permission.BODY_SENSORS;
     //短信权限 7
+    public static final String PERMISSION_GROUP_SMS = Manifest.permission_group.SMS;
     public static final String PERMISSION_READ_SMS = Manifest.permission.READ_SMS;
     public static final String PERMISSION_RECEIVE_WAP_PUSH = Manifest.permission.RECEIVE_WAP_PUSH;
     public static final String PERMISSION_RECEIVE_MMS = Manifest.permission.RECEIVE_MMS;
@@ -69,36 +75,36 @@ public class PermissionUtils {
     public static final String PERMISSION_SEND_SMS = Manifest.permission.SEND_SMS;
     public static final String PERMISSION_READ_CELL_BROADCASTS = "android.permission.READ_CELL_BROADCASTS";
     //SD卡权限 8
+    public static final String PERMISSION_GROUP_STORAGE = Manifest.permission_group.STORAGE;
     public static final String PERMISSION_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
     public static final String PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     /**
      * 判断是否请求权限
+     *
      * @param activity
      * @param code
      * @param permissions
      * @return true 全部权限通过 | false 有权限未通过
      */
-    public static boolean requestPermissions(Activity activity, int code, String... permissions){
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-            Log.i(TAG, "api < 23!");
+    public static boolean requestPermissions(Activity activity, int code, String... permissions) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            Log.i(TAG, "api < 23! request success");
             return true;
         }
         //未允许权限集合
         List<String> notGranted = new ArrayList<>();
         for (String permission : permissions) {
             //添加未允许的权限
-            if(ActivityCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
                 notGranted.add(permission);
             }
         }
         if (notGranted.size() > 0) {
             //向系统请求权限
-            if (isDebug) {
-                Log.d(TAG, "请求权限: code = " + code);
-                for (String str : notGranted) {
-                    Log.d(TAG, str);
-                }
+            print("请求权限: code = " + code);
+            for (String str : notGranted) {
+                print(str);
             }
             ActivityCompat.requestPermissions(activity, notGranted.toArray(new String[notGranted.size()]), code);
             return false;
@@ -108,19 +114,28 @@ public class PermissionUtils {
 
     /**
      * 判断是否请求权限
+     *
      * @param activity
      * @param code
      * @return true 全部权限通过 | false 有权限未通过
      */
-    public static boolean requestPermissions(Activity activity, Integer... code){
+    public static boolean requestPermissions(Activity activity, int code) {
+        return requestPermissions(activity, new Integer[]{code});
+    }
+
+    /**
+     * 判断是否请求权限
+     *
+     * @param activity
+     * @param code
+     * @return true 全部权限通过 | false 有权限未通过
+     */
+    public static boolean requestPermissions(Activity activity, Integer... code) {
         List<String> permissions = new ArrayList<>();
         List<Integer> codes = Arrays.asList(code);
         //日历权限
         if (codes.contains(CODE_CALENDAR)) {
             permissions.add(PERMISSION_READ_CALENDAR);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_WRITE_CALENDAR);
-            }
         }
         //相机权限
         if (codes.contains(CODE_CAMERA)) {
@@ -129,17 +144,10 @@ public class PermissionUtils {
         //联系人权限
         if (codes.contains(CODE_CONTACTS)) {
             permissions.add(PERMISSION_WRITE_CONTACTS);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_GET_ACCOUNTS);
-                permissions.add(PERMISSION_READ_CONTACTS);
-            }
         }
         //定位权限
         if (codes.contains(CODE_LOCATION)) {
             permissions.add(PERMISSION_ACCESS_FINE_LOCATION);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_ACCESS_COARSE_LOCATION);
-            }
         }
         //麦克相关权限
         if (codes.contains(CODE_MICROPHONE)) {
@@ -148,14 +156,6 @@ public class PermissionUtils {
         //手机状态权限
         if (codes.contains(CODE_PHONE)) {
             permissions.add(PERMISSION_READ_PHONE_STATE);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_CALL_PHONE);
-                permissions.add(PERMISSION_USE_SIP);
-                permissions.add(PERMISSION_PROCESS_OUTGOING_CALLS);
-                permissions.add(PERMISSION_ADD_VOICEMAIL);
-                permissions.add(PERMISSION_READ_CALL_LOG);
-                permissions.add(PERMISSION_WRITE_CALL_LOG);
-            }
         }
         //传感器权限
         if (codes.contains(CODE_SENSORS)) {
@@ -164,23 +164,13 @@ public class PermissionUtils {
         //短信权限
         if (codes.contains(CODE_SMS)) {
             permissions.add(PERMISSION_READ_SMS);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_RECEIVE_WAP_PUSH);
-                permissions.add(PERMISSION_RECEIVE_MMS);
-                permissions.add(PERMISSION_RECEIVE_SMS);
-                permissions.add(PERMISSION_SEND_SMS);
-                permissions.add(PERMISSION_READ_CELL_BROADCASTS);
-            }
         }
         //SD卡权限
         if (codes.contains(CODE_STORAGE)) {
             permissions.add(PERMISSION_READ_EXTERNAL_STORAGE);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O && isAll){
-                permissions.add(PERMISSION_WRITE_EXTERNAL_STORAGE);
-            }
         }
 
-        if (permissions.size() == 0){
+        if (permissions.size() == 0) {
             return true;
         }
         return requestPermissions(activity, CODE_MULTI, permissions.toArray(new String[permissions.size()]));
@@ -188,46 +178,44 @@ public class PermissionUtils {
 
     /**
      * 权限获取之后的结果显示
+     *
      * @param activity
      * @param requestCode
      * @param permissions
      * @param grantResults
-     * @param permissionCallBack    权限获取结果监听
+     * @param permissionCallBack 权限获取结果监听
      */
     public static void requestPermissionsResult(final Activity activity, final int requestCode,
                                                 String[] permissions, int[] grantResults,
-                                                final PermissionCallBack permissionCallBack){
+                                                final PermissionCallBack permissionCallBack) {
         requestPermissionsResult(activity, requestCode, permissions, grantResults, true, permissionCallBack);
     }
 
     /**
      * 权限获取之后的结果显示
+     *
      * @param activity
      * @param requestCode
      * @param permissions
      * @param grantResults
-     * @param showdefaultWindow     是否显示默认权限结果窗口
-     * @param permissionCallBack    权限获取结果监听
+     * @param showdefaultWindow  是否显示默认权限结果窗口
+     * @param permissionCallBack 权限获取结果监听
      */
     public static void requestPermissionsResult(final Activity activity, final int requestCode,
                                                 String[] permissions, int[] grantResults,
                                                 boolean showdefaultWindow,
-                                                final PermissionCallBack permissionCallBack){
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-            Log.i(TAG, "api < 23!");
+                                                final PermissionCallBack permissionCallBack) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            Log.i(TAG, "api < 23! result success");
             return;
         }
-        if (isDebug) {
-            Log.d(TAG, "requestCode = " + requestCode);
-        }
+        print("requestCode = " + requestCode);
         //未允许权限集合
         List<String> notGranted = new ArrayList<>();
         for (int i = 0; i < grantResults.length; i++) {
-            if (isDebug) {
-                Log.d(TAG, "权限 = " + permissions[i] + ", 当前结果 = " + grantResults[i]);
-            }
+            print("权限 = " + permissions[i] + ", 当前结果 = " + grantResults[i]);
             //添加未允许的权限
-            if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                 notGranted.add(permissions[i]);
             }
         }
@@ -260,12 +248,18 @@ public class PermissionUtils {
                                 permissionCallBack.onFail(requestCode);
                             }
                         });
-            }else {
+            } else {
                 permissionCallBack.onFail(requestCode);
             }
-        }else {
+        } else {
             //全部权限通过
             permissionCallBack.onSuccess(requestCode);
+        }
+    }
+
+    private static void print(String str) {
+        if (isDebug) {
+            Log.d(TAG, str);
         }
     }
 
