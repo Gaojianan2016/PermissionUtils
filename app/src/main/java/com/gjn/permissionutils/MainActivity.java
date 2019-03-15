@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!isShow) {
-            if (PermissionUtils.requestPermissions(this, PermissionUtils.CODE_CAMERA,
-                    PermissionUtils.CODE_PHONE, PermissionUtils.CODE_STORAGE)) {
+            if (PermissionUtils.requestPermissions(this, new int[]{PermissionUtils.CODE_CAMERA,
+                    PermissionUtils.CODE_PHONE, PermissionUtils.CODE_STORAGE},
+                    PermissionUtils.PERMISSION_ACCESS_COARSE_LOCATION)) {
                 Log.e("-s-", "权限全通过");
             } else {
                 Log.e("-s-", "权限部分未通过");

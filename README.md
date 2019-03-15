@@ -13,7 +13,7 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.github.Gaojianan2016:PermissionUtils:1.0.4'
+    implementation 'com.github.Gaojianan2016:PermissionUtils:1.0.5'
 }
 ```
 
@@ -47,8 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!isShow) {
-            if (PermissionUtils.requestPermissions(this, PermissionUtils.CODE_CAMERA,
-                    PermissionUtils.CODE_PHONE, PermissionUtils.CODE_STORAGE)) {
+            if (PermissionUtils.requestPermissions(this, new int[]{PermissionUtils.CODE_CAMERA,
+                                    PermissionUtils.CODE_PHONE, PermissionUtils.CODE_STORAGE},
+                                    PermissionUtils.PERMISSION_ACCESS_COARSE_LOCATION)) {
                 Log.e("-s-", "权限全通过");
             } else {
                 Log.e("-s-", "权限部分未通过");
@@ -104,6 +105,7 @@ AndroidManifest
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"

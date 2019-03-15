@@ -1,6 +1,7 @@
 package com.gjn.permissionlibrary;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -36,26 +38,20 @@ public class PermissionUtils {
     public static final int CODE_MULTI =        0x7834;     //多个权限
 
     //日历权限 0
-    public static final String PERMISSION_GROUP_CALENDAR = Manifest.permission_group.CALENDAR;
     public static final String PERMISSION_READ_CALENDAR = Manifest.permission.READ_CALENDAR;
     public static final String PERMISSION_WRITE_CALENDAR = Manifest.permission.WRITE_CALENDAR;
     //相机权限 1
-    public static final String PERMISSION_GROUP_CAMERA = Manifest.permission_group.CAMERA;
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     //联系人权限 2
-    public static final String PERMISSION_GROUP_CONTACTS = Manifest.permission_group.CONTACTS;
     public static final String PERMISSION_WRITE_CONTACTS = Manifest.permission.WRITE_CONTACTS;
     public static final String PERMISSION_GET_ACCOUNTS = Manifest.permission.GET_ACCOUNTS;
     public static final String PERMISSION_READ_CONTACTS = Manifest.permission.READ_CONTACTS;
     //定位权限 3
-    public static final String PERMISSION_GROUP_LOCATION = Manifest.permission_group.LOCATION;
     public static final String PERMISSION_ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String PERMISSION_ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     //麦克相关权限 4
-    public static final String PERMISSION_GROUP_MICROPHONE = Manifest.permission_group.MICROPHONE;
     public static final String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     //手机状态权限 5
-    public static final String PERMISSION_GROUP_PHONE = Manifest.permission_group.PHONE;
     public static final String PERMISSION_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
     public static final String PERMISSION_CALL_PHONE = Manifest.permission.CALL_PHONE;
     public static final String PERMISSION_USE_SIP = Manifest.permission.USE_SIP;
@@ -64,10 +60,8 @@ public class PermissionUtils {
     public static final String PERMISSION_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
     public static final String PERMISSION_WRITE_CALL_LOG = Manifest.permission.WRITE_CALL_LOG;
     //传感器权限 6
-    public static final String PERMISSION_GROUP_SENSORS = Manifest.permission_group.SENSORS;
     public static final String PERMISSION_BODY_SENSORS = Manifest.permission.BODY_SENSORS;
     //短信权限 7
-    public static final String PERMISSION_GROUP_SMS = Manifest.permission_group.SMS;
     public static final String PERMISSION_READ_SMS = Manifest.permission.READ_SMS;
     public static final String PERMISSION_RECEIVE_WAP_PUSH = Manifest.permission.RECEIVE_WAP_PUSH;
     public static final String PERMISSION_RECEIVE_MMS = Manifest.permission.RECEIVE_MMS;
@@ -75,7 +69,6 @@ public class PermissionUtils {
     public static final String PERMISSION_SEND_SMS = Manifest.permission.SEND_SMS;
     public static final String PERMISSION_READ_CELL_BROADCASTS = "android.permission.READ_CELL_BROADCASTS";
     //SD卡权限 8
-    public static final String PERMISSION_GROUP_STORAGE = Manifest.permission_group.STORAGE;
     public static final String PERMISSION_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
     public static final String PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
@@ -131,49 +124,18 @@ public class PermissionUtils {
      * @return true 全部权限通过 | false 有权限未通过
      */
     public static boolean requestPermissions(Activity activity, Integer... code) {
-        List<String> permissions = new ArrayList<>();
-        List<Integer> codes = Arrays.asList(code);
-        //日历权限
-        if (codes.contains(CODE_CALENDAR)) {
-            permissions.add(PERMISSION_READ_CALENDAR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            Log.w(TAG, "安卓7.0后，需要传入对应的权限，不能单权限获取整个权限组，建议使用" +
+                    "requestPermissions(Activity activity, int[] codes, String... strings) 或者 " +
+                    "requestPermissions(Activity activity, int code, String... permissions)");
         }
-        //相机权限
-        if (codes.contains(CODE_CAMERA)) {
-            permissions.add(PERMISSION_CAMERA);
-        }
-        //联系人权限
-        if (codes.contains(CODE_CONTACTS)) {
-            permissions.add(PERMISSION_WRITE_CONTACTS);
-        }
-        //定位权限
-        if (codes.contains(CODE_LOCATION)) {
-            permissions.add(PERMISSION_ACCESS_FINE_LOCATION);
-        }
-        //麦克相关权限
-        if (codes.contains(CODE_MICROPHONE)) {
-            permissions.add(PERMISSION_RECORD_AUDIO);
-        }
-        //手机状态权限
-        if (codes.contains(CODE_PHONE)) {
-            permissions.add(PERMISSION_READ_PHONE_STATE);
-        }
-        //传感器权限
-        if (codes.contains(CODE_SENSORS)) {
-            permissions.add(PERMISSION_BODY_SENSORS);
-        }
-        //短信权限
-        if (codes.contains(CODE_SMS)) {
-            permissions.add(PERMISSION_READ_SMS);
-        }
-        //SD卡权限
-        if (codes.contains(CODE_STORAGE)) {
-            permissions.add(PERMISSION_READ_EXTERNAL_STORAGE);
-        }
+        String[] permissions = code2String(code);
+        return permissions.length == 0 || requestPermissions(activity, CODE_MULTI, permissions);
+    }
 
-        if (permissions.size() == 0) {
-            return true;
-        }
-        return requestPermissions(activity, CODE_MULTI, permissions.toArray(new String[permissions.size()]));
+    public static boolean requestPermissions(Activity activity, int[] codes, String... strings) {
+        String[] permissions = concat(strings, code2String(int2Integer(codes)));
+        return permissions.length == 0 || requestPermissions(activity, CODE_MULTI, permissions);
     }
 
     /**
@@ -224,7 +186,7 @@ public class PermissionUtils {
         if (notGranted.size() > 0) {
             //有权限被拒绝
             if (showdefaultWindow) {
-                creatWindow(activity, notGranted,
+                createWindow(activity, notGranted,
                         //重新获取
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -271,15 +233,17 @@ public class PermissionUtils {
         activity.startActivity(intent);
     }
 
-    private static void creatWindow(Activity activity, List<String> notGranted,
+    private static void createWindow(Activity activity, List<String> notGranted,
                                     DialogInterface.OnClickListener retrylistener,
                                     DialogInterface.OnClickListener settinglistener,
                                     DialogInterface.OnClickListener canclelistener) {
         StringBuilder message = new StringBuilder();
-        message.append(notGranted.size()).append("个权限被拒绝\n\n")
-                .append("尝试重新获取\n\n如果失败请进入设置中修改\n\n")
+        message.append(notGranted.size()).append("个权限被拒绝\n");
+        for (String str : notGranted) {
+            message.append(getLast(str)).append("\n");
+        }
+        message.append("\n尝试重新获取\n\n如果失败请进入设置中修改\n\n")
                 .append("点击进入设置跳转 软件设置 -> 权限管理");
-
         new AlertDialog.Builder(activity)
                 .setTitle("帮助")
                 .setMessage(message)
@@ -289,5 +253,86 @@ public class PermissionUtils {
                 .setNegativeButton("退出", canclelistener)
                 .create()
                 .show();
+    }
+
+    private static String getLast(String str){
+        String[] strings = str.split("[.]");
+        if (strings.length > 1) {
+            return strings[strings.length - 1];
+        }
+        return str;
+    }
+
+    private static Integer[] int2Integer(int[] ints){
+        Integer[] result = new Integer[ints.length];
+        for (int i = 0; i < ints.length; i++) {
+            result[i] = ints[i];
+        }
+        return result;
+    }
+
+    private static <T> T[] concat(T[] t1, T[] t2){
+        if (t1 == null || t1.length == 0) {
+            return t2;
+        }
+        if (t2 == null || t2.length == 0) {
+            return t1;
+        }
+        T[] result = Arrays.copyOf(t1, t1.length+t2.length);
+        System.arraycopy(t2, 0, result, result.length - t2.length, t2.length);
+        return result;
+    }
+
+    @SafeVarargs
+    private static <T> T[] concat(T[] t1, T[]... ts){
+        T[] result = Arrays.copyOf(t1, t1.length);
+        for (int i = 0; i < ts.length; i++) {
+            if (i < ts.length) {
+                result = concat(result, ts[i]);
+            }
+        }
+        return result;
+    }
+
+    private static String[] code2String(Integer... code){
+        List<String> permissions = new ArrayList<>();
+        List<Integer> codes = Arrays.asList(code);
+        //日历权限
+        if (codes.contains(CODE_CALENDAR)) {
+            permissions.add(PERMISSION_READ_CALENDAR);
+        }
+        //相机权限
+        if (codes.contains(CODE_CAMERA)) {
+            permissions.add(PERMISSION_CAMERA);
+        }
+        //联系人权限
+        if (codes.contains(CODE_CONTACTS)) {
+            permissions.add(PERMISSION_WRITE_CONTACTS);
+        }
+        //定位权限
+        if (codes.contains(CODE_LOCATION)) {
+            permissions.add(PERMISSION_ACCESS_FINE_LOCATION);
+        }
+        //麦克相关权限
+        if (codes.contains(CODE_MICROPHONE)) {
+            permissions.add(PERMISSION_RECORD_AUDIO);
+        }
+        //手机状态权限
+        if (codes.contains(CODE_PHONE)) {
+            permissions.add(PERMISSION_READ_PHONE_STATE);
+        }
+        //传感器权限
+        if (codes.contains(CODE_SENSORS)) {
+            permissions.add(PERMISSION_BODY_SENSORS);
+        }
+        //短信权限
+        if (codes.contains(CODE_SMS)) {
+            permissions.add(PERMISSION_READ_SMS);
+        }
+        //SD卡权限
+        if (codes.contains(CODE_STORAGE)) {
+            permissions.add(PERMISSION_READ_EXTERNAL_STORAGE);
+        }
+        return permissions.toArray(new String[permissions.size()]);
     }
 }
