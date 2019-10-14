@@ -13,7 +13,7 @@ allprojects {
 
 
 dependencies {
-    implementation 'com.github.Gaojianan2016:PermissionUtils:2.0.0x'
+    implementation 'com.github.Gaojianan2016:PermissionUtils:2.0.1x'
 }
 ```
 
