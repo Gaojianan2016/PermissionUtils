@@ -1,9 +1,10 @@
 package com.gjn.permissionutils;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.gjn.permissionlibrary.PermissionCallBack;
 import com.gjn.permissionlibrary.PermissionUtils;
